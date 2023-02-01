@@ -3,6 +3,8 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
+X_features = ['size(sqft)', 'bedrooms', 'floors', 'age']
+
 
 def convertor(txt_data: str, x_usecols: tuple):
     X_train = np.loadtxt(txt_data, usecols=x_usecols, delimiter=',')
@@ -100,12 +102,14 @@ class multiple_linear_regressor:
         plt.show()
 
 
-X_features = ['size(sqft)', 'bedrooms', 'floors', 'age']
+# Initial values of b and w
 b_init = 7
 w_init = np.array([3, 18, 53, 26])
 
+# Converting txt data into nd array
 X_train, y_train = convertor('./houses.txt', x_usecols=(0, 1, 2, 3))
 
+# Instance of the object
 final_model = multiple_linear_regressor(
     X_train,
     X_features,
@@ -117,6 +121,9 @@ final_model = multiple_linear_regressor(
     'zn'
 )
 
+# Performing gradient descent
 w, b, _, _ = final_model.perform_gradient_descent()
 print(w, b)
+
+# Visualizing accuracy
 final_model.accuracy_visualization(w, b)
