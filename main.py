@@ -1,4 +1,6 @@
 # Import statements
+from cProfile import label
+
 import numpy as np
 import math
 import matplotlib.pyplot as plt
@@ -99,6 +101,7 @@ class multiple_linear_regressor:
                 axes[i].scatter(self.features[:, i], f_xwb)
                 axes[i].set_xlabel(self.features_list[i])
                 axes[i].set_ylabel("Price (1000s)")
+        plt.suptitle("Actual Values vs Predicted Values")
         plt.show()
 
 
