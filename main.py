@@ -1,36 +1,39 @@
 # Import statements
-from cProfile import label
-
 import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-X_features = ['size(sqft)', 'bedrooms', 'floors', 'age']
+X_FEATURES = ['size(sqft)', 'bedrooms', 'floors', 'age']
 
 
 def convertor(txt_data: str, x_usecols: tuple):
-    X_train = np.loadtxt(txt_data, usecols=x_usecols, delimiter=',')
+    x_train = np.loadtxt(txt_data, usecols=x_usecols, delimiter=',')
     y_train = np.loadtxt(txt_data, usecols=x_usecols[-1] + 1, delimiter=',')
-    return X_train, y_train
+    return x_train, y_train
 
 
 class multiple_linear_regressor:
-    def __init__(self, X_train, X_feature_names, y_train, w_init, b_init, alpha, no_iters, normalization_type: str):
-        self.features = X_train
+    def __init__(
+            self, training_data, features,
+            y_train, w_init, b_init, alpha,
+            no_iters, norm_type: str
+    ):
+        self.features = training_data
         self.targets = y_train
-        self.features_list = X_feature_names
-        self.mean = np.mean(X_train, axis=0)
-        self.sigma = np.std(X_train, axis=0)
-        self.default_features = self.desired_normalization(normalization_type)
+        self.features_list = features
+        self.mean = np.mean(training_data, axis=0)
+        self.sigma = np.std(training_data, axis=0)
+        self.default_features = self.desired_norm(norm_type)
         self.w = w_init
         self.b = b_init
         self.learning_rate = alpha
         self.total_iters = no_iters
-        self.m, self.n = X_train.shape  # Calculating m (training ex) and n (no of features)
+        # Calculating m (training ex) and n (no of features)
+        self.m, self.n = training_data.shape
         self.correct_w = None
         self.correct_b = None
 
-    def desired_normalization(self, normalization):
+    def desired_norm(self, normalization):
         if normalization == 'mn':
             return self.mean_norm(self.features)
         elif normalization == 'zn':
@@ -79,7 +82,9 @@ class multiple_linear_regressor:
         return self.correct_w, self.correct_b, j_his, w_his
 
     def mean_norm(self, X_train):  # Mean normalization
-        mean_nor = (X_train - self.mean) / (X_train.max(axis=0) - X_train.min(axis=0))
+        mean_nor = (X_train - self.mean) / (
+                X_train.max(axis=0) - X_train.min(axis=0)
+        )
         return mean_nor
 
     def zscore_norm(self, X_train):  # Zscore normalization
@@ -110,18 +115,12 @@ b_init = 7
 w_init = np.array([3, 18, 53, 26])
 
 # Converting txt data into nd array
-X_train, y_train = convertor('./houses.txt', x_usecols=(0, 1, 2, 3))
+x_train, y_train = convertor('./houses.txt', x_usecols=(0, 1, 2, 3))
 
 # Instance of the object
 final_model = multiple_linear_regressor(
-    X_train,
-    X_features,
-    y_train,
-    np.zeros_like(w_init),
-    0,
-    5.0e-7,
-    1000,
-    'zn'
+    x_train, X_FEATURES, y_train, np.zeros_like(w_init),
+    0, 5.0e-7, 1000, 'zn'
 )
 
 # Performing gradient descent
